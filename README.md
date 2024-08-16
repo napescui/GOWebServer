@@ -50,7 +50,9 @@ The server can be configured using the `config.json` file. The following are the
     "host": "127.0.0.1",
     "port": "17091",
     "loginUrl": "gtlogin-backend.vercel.app",
-    "isLogging": true
+    "isLogging": true,
+    "rateLimit": 150,
+    "rateLimitDuration": 5
 }
 ```
 
