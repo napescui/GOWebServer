@@ -56,6 +56,13 @@ The server can be configured using the `config.json` file. The following are the
 }
 ```
 
+## Contact
+
+If you have any questions or suggestions, feel free to contact me at:
+
+- Discord: [yoruakio](https://discord.com/users/919841186246692886)
+- Telegram: [yoruakio](https://t.me/yoruakio)
+
 ## Contributing
 
 Contributions are welcome! If you would like to contribute to the project, please fork the repository and submit a pull request.
