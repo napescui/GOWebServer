@@ -2,6 +2,9 @@
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 
+# Dev folder
+dev/
+
 # Configuration files
 *.yml
 *.yaml
