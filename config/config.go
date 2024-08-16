@@ -9,8 +9,9 @@ import (
 
 type Config struct {
 	// Growtopia Server Configuration
-	Host string `json:"host"`
-	Port string `json:"port"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	LoginUrl string `json:"loginUrl"`
 
 	// Logger Configuration
 	Logger bool `json:"isLogging"`
@@ -55,9 +56,10 @@ func GetConfig() Config {
 
 func CreateConfig() Config {
 	config := Config{
-		Host: "127.0.0.1",
-		Port: "17091",
-		Logger: true,
+		Host:     "127.0.0.1",
+		Port:     "17091",
+		LoginUrl: "gtlogin-backend.vercel.app",
+		Logger:   true,
 	}
 
 	data, err := json.MarshalIndent(config, "", "    ")
@@ -65,7 +67,7 @@ func CreateConfig() Config {
 		log.Fatal(err)
 	}
 
-	err = os.WriteFile("config.json", data, 0644)
+	err = os.WriteFile("config.json", data, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
