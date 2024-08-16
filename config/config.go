@@ -11,6 +11,9 @@ type Config struct {
 	// Growtopia Server Configuration
 	Host string `json:"host"`
 	Port string `json:"port"`
+
+	// Logger Configuration
+	Logger bool `json:"isLogging"`
 }
 
 var config Config
@@ -54,6 +57,7 @@ func CreateConfig() Config {
 	config := Config{
 		Host: "127.0.0.1",
 		Port: "17091",
+		Logger: true,
 	}
 
 	data, err := json.MarshalIndent(config, "", "    ")
