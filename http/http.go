@@ -64,6 +64,9 @@ func Initialize() *fiber.App {
 		config.Host, config.Port, config.LoginUrl, meta)
 
 	app.Post("/growtopia/server_data.php", func(c *fiber.Ctx) error {
+		if c.Get("User-Agent") == "" || !strings.Contains(c.Get("User-Agent"), "UbiServices_SDK") {
+			return c.SendStatus(fiber.StatusForbidden)
+		}
 		return c.SendString(content)
 	})
 
