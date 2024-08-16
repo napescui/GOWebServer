@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/yoruakio/gowebserver/config"
 )
 
 func main() {
-	fmt.Println("Hello, World!")
+	config.LoadConfig()
+
+	fmt.Println(config.GetConfig())
 }
