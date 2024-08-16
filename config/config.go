@@ -15,6 +15,10 @@ type Config struct {
 
 	// Logger Configuration
 	Logger bool `json:"isLogging"`
+
+	// Rate Limiter Configuration
+	RateLimit         int `json:"rateLimit"`
+	RateLimitDuration int `json:"rateLimitDuration"`
 }
 
 var config Config
@@ -56,10 +60,12 @@ func GetConfig() Config {
 
 func CreateConfig() Config {
 	config := Config{
-		Host:     "127.0.0.1",
-		Port:     "17091",
-		LoginUrl: "gtlogin-backend.vercel.app",
-		Logger:   true,
+		Host:              "127.0.0.1",
+		Port:              "17091",
+		LoginUrl:          "gtlogin-backend.vercel.app",
+		Logger:            true,
+		RateLimit:         150, // 60 requests per minute
+		RateLimitDuration: 5,   // 2 minutes of rate limit cooldown
 	}
 
 	data, err := json.MarshalIndent(config, "", "    ")

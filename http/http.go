@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/yoruakio/gowebserver/config"
 	"github.com/yoruakio/gowebserver/logger"
@@ -24,14 +26,23 @@ func Initialize() *fiber.App {
 		ReadTimeout:           10 * time.Second,
 		WriteTimeout:          10 * time.Second,
 	})
+	config := config.GetConfig()
 
-	// Middleware
 	app.Use(cors.New())
 	app.Use(recover.New())
 	app.Use(compress.New())
-
+	app.Use(limiter.New(limiter.Config{
+		Max:        config.RateLimit,
+		Expiration: time.Duration(config.RateLimitDuration) * time.Minute,
+		LimitReached: func(c *fiber.Ctx) error {
+			if config.Logger {
+				logger.Infof("IP %s is rate limited", c.IP())
+			}
+			return c.Status(fiber.StatusTooManyRequests).SendString("Too many requests, please try again later.")
+		},
+	}))
 	app.Use(func(c *fiber.Ctx) error {
-		if config.GetConfig().Logger {
+		if config.Logger {
 			logger.Infof("[%s] %s %s => %d", c.IP(), c.Method(), c.Path(), c.Response().StatusCode())
 		}
 		return c.Next()
@@ -42,7 +53,6 @@ func Initialize() *fiber.App {
 	})
 
 	meta := fmt.Sprintf("K10WA_%d", rand.Intn(9000)+1000)
-	config := config.GetConfig()
 	content := fmt.Sprintf(
 		"server|%s\n"+
 			"port|%s\n"+
@@ -53,7 +63,7 @@ func Initialize() *fiber.App {
 			"RTENDMARKERBS1001",
 		config.Host, config.Port, config.LoginUrl, meta)
 
-	app.Get("/growtopia/server_data.php", func(c *fiber.Ctx) error {
+	app.Post("/growtopia/server_data.php", func(c *fiber.Ctx) error {
 		return c.SendString(content)
 	})
 
