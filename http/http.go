@@ -125,7 +125,7 @@ func Initialize() *fiber.App {
 		return c.SendString(content)
 	})
 
-	app.Get("/player/login/dashboard", func(c *fiber.Ctx) error {
+	app.Post("/player/login/dashboard", func(c *fiber.Ctx) error {
 		htmlFile, err := os.ReadFile("html/dashboard.html")
 		if err != nil {
 			logger.Error(err)
