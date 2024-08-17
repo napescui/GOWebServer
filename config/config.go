@@ -9,6 +9,8 @@ import (
 
 type Config struct {
 	// Growtopia Server Configuration
+	ServerName string `json:"serverName"`
+	ServerSupport string `json:"serverSupport"`
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	LoginUrl string `json:"loginUrl"`
@@ -22,6 +24,7 @@ type Config struct {
 
 	// Geo Location Configuration
 	GeoLocation []string `json:"trustedRegions"`
+	EnableGeo   bool     `json:"enableGeo"`
 }
 
 var config Config
@@ -63,12 +66,15 @@ func GetConfig() Config {
 
 func CreateConfig() Config {
 	config := Config{
+		ServerName:        "VenturaPS",
+		ServerSupport:     "https://gg.gg/venturaps",
 		Host:              "127.0.0.1",
 		Port:              "17091",
-		LoginUrl:          "gtlogin-backend.vercel.app",
+		LoginUrl:          "default",
 		Logger:            true,
 		RateLimit:         150, // 60 requests per minute
 		RateLimitDuration: 5,   // 2 minutes of rate limit cooldown
+		EnableGeo:         true,
 		GeoLocation:       []string{"ID", "SG", "MY"},
 	}
 

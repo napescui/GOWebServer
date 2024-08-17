@@ -7,6 +7,8 @@ import (
 	"net"
 	"strings"
 	"time"
+	"os"
+	"encoding/base64"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -52,6 +54,10 @@ func Initialize() *fiber.App {
 	}))
 
 	app.Use(func(c *fiber.Ctx) error {
+		if !config.EnableGeo {
+			return c.Next()
+		}
+
 		if db == nil {
 			return c.Next()
 		}
@@ -98,6 +104,10 @@ func Initialize() *fiber.App {
 	})
 
 	meta := fmt.Sprintf("K10WA_%d", rand.Intn(9000)+1000)
+	loginUrl := config.LoginUrl
+	if loginUrl == "default" {
+		loginUrl = config.Host
+	}
 	content := fmt.Sprintf(
 		"server|%s\n"+
 			"port|%s\n"+
@@ -106,7 +116,7 @@ func Initialize() *fiber.App {
 			"loginurl|%s\n"+
 			"meta|%s\n"+
 			"RTENDMARKERBS1001",
-		config.Host, config.Port, config.LoginUrl, meta)
+		config.Host, config.Port, loginUrl, meta)
 
 	app.Post("/growtopia/server_data.php", func(c *fiber.Ctx) error {
 		if c.Get("User-Agent") == "" || !strings.Contains(c.Get("User-Agent"), "UbiServices_SDK") {
@@ -115,8 +125,41 @@ func Initialize() *fiber.App {
 		return c.SendString(content)
 	})
 
+	app.Get("/player/login/dashboard", func(c *fiber.Ctx) error {
+		htmlFile, err := os.ReadFile("html/dashboard.html")
+		if err != nil {
+			logger.Error(err)
+			return c.Status(fiber.StatusInternalServerError).SendString("Error reading file")
+		}
+	
+		html := string(htmlFile)
+		html = strings.Replace(html, "{serverName}", config.ServerName, -1)
+		html = strings.Replace(html, "{serverSupport}", config.ServerSupport, -1)
+		html = strings.Replace(html, "{serverHost}", config.Host, -1)
+		c.Set("Content-Type", "text/html")
+		return c.SendString(html)
+	})
+
+	app.Post("/player/growid/login/validate", func(c *fiber.Ctx) error {
+		token := c.FormValue("_token")
+		growid := c.FormValue("growId")
+		password := c.FormValue("password")
+
+		encoded := fmt.Sprintf("_token=%s&growId=%s&password=%s", token, growid, password)
+		encoded = base64.StdEncoding.EncodeToString([]byte(encoded))
+		
+		data := fmt.Sprintf(`{"status":"success","message":"Account Validated","token":"%s","url":"","accountType":"growtopia"}`, encoded)
+
+		return c.SendString(data)
+	})
+
+	app.Get("/player/validate", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "text/html")
+		return c.SendString("<script>window.close();</script>")
+	})
+
 	app.Use(func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusNotFound).SendString("Not Found")
+		return c.Status(fiber.StatusNotFound).SendString("404 Not Found")
 	})
 
 	return app
