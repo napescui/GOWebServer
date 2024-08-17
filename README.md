@@ -52,7 +52,12 @@ The server can be configured using the `config.json` file. The following are the
     "loginUrl": "gtlogin-backend.vercel.app",
     "isLogging": true,
     "rateLimit": 150,
-    "rateLimitDuration": 5
+    "rateLimitDuration": 5,
+    "trustedRegions": [
+        "ID",
+        "SG",
+        "MY"
+    ]
 }
 ```
 
