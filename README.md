@@ -20,13 +20,13 @@ The following are required to build and run GOWebServer:
 
 Building the server is simple, just run the following command:
 
-- 1. Clone the repository:
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/yoruakio/GOWebServer.git
 ```
 
-- 2. Build the server:
+2. Build the server:
 
 ```bash
 go build
@@ -35,7 +35,7 @@ go build
 go run main.go
 ```
 
-- 3. Run the server:
+3. Run the server:
 
 ```bash
 ./GOWebServer
@@ -65,8 +65,8 @@ The server can be configured using the `config.json` file. The following are the
 
 If you have any questions or suggestions, feel free to contact me at:
 
-- Discord: [yoruakio](https://discord.com/users/919841186246692886)
-- Telegram: [yoruakio](https://t.me/yoruakio)
+- Discord: [@yoruakio](https://discord.com/users/919841186246692886)
+- Telegram: [@yoruakio](https://t.me/yoruakio)
 
 ## Contributing
 
