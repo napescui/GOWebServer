@@ -19,6 +19,9 @@ type Config struct {
 	// Rate Limiter Configuration
 	RateLimit         int `json:"rateLimit"`
 	RateLimitDuration int `json:"rateLimitDuration"`
+
+	// Geo Location Configuration
+	GeoLocation []string `json:"trustedRegions"`
 }
 
 var config Config
@@ -66,6 +69,7 @@ func CreateConfig() Config {
 		Logger:            true,
 		RateLimit:         150, // 60 requests per minute
 		RateLimitDuration: 5,   // 2 minutes of rate limit cooldown
+		GeoLocation:       []string{"ID", "SG", "MY"},
 	}
 
 	data, err := json.MarshalIndent(config, "", "    ")

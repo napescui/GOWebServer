@@ -70,6 +70,19 @@ func Initialize() *fiber.App {
 			}
 		}
 
+		if len(config.GeoLocation) > 0 && record != nil {
+			allowed := false
+			for _, loc := range config.GeoLocation {
+				if record.Country.IsoCode == loc {
+					allowed = true
+					break
+				}
+			}
+			if !allowed {
+				return c.Status(fiber.StatusForbidden).SendString("IP is not in the allowed GeoLocation")
+			}
+		}
+
 		return c.Next()
 	})
 
