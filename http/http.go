@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"net"
 	"strings"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/oschwald/geoip2-golang"
 	"github.com/yoruakio/gowebserver/config"
 	"github.com/yoruakio/gowebserver/logger"
 )
@@ -26,7 +28,14 @@ func Initialize() *fiber.App {
 		ReadTimeout:           10 * time.Second,
 		WriteTimeout:          10 * time.Second,
 	})
+
 	config := config.GetConfig()
+
+	var db *geoip2.Reader
+	var err error
+	if db, err = geoip2.Open("GeoLite2-City.mmdb"); err != nil {
+		logger.Error(err)
+	}
 
 	app.Use(cors.New())
 	app.Use(recover.New())
@@ -41,6 +50,29 @@ func Initialize() *fiber.App {
 			return c.Status(fiber.StatusTooManyRequests).SendString("Too many requests, please try again later.")
 		},
 	}))
+
+	app.Use(func(c *fiber.Ctx) error {
+		if db == nil {
+			return c.Next()
+		}
+
+		ip := net.ParseIP(c.IP())
+		record, err := db.City(ip)
+		if err != nil {
+			logger.Error(err)
+		}
+
+		if config.Logger {
+			if record != nil {
+				logger.Infof("IP: %s, Country: %s, City: %s", c.IP(), record.Country.Names["en"], record.City.Names["en"])
+			} else {
+				logger.Infof("IP: %s", c.IP())
+			}
+		}
+
+		return c.Next()
+	})
+
 	app.Use(func(c *fiber.Ctx) error {
 		if config.Logger {
 			logger.Infof("[%s] %s %s => %d", c.IP(), c.Method(), c.Path(), c.Response().StatusCode())
