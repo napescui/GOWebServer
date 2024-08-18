@@ -9,8 +9,6 @@ import (
 
 type Config struct {
 	// Growtopia Server Configuration
-	ServerName string `json:"serverName"`
-	ServerSupport string `json:"serverSupport"`
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	LoginUrl string `json:"loginUrl"`
@@ -67,8 +65,6 @@ func GetConfig() Config {
 
 func CreateConfig() Config {
 	config := Config{
-		ServerName:        "VenturaPS",
-		ServerSupport:     "https://gg.gg/venturaps",
 		Host:              "127.0.0.1",
 		Port:              "17091",
 		LoginUrl:          "default",
