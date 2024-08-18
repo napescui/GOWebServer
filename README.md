@@ -49,6 +49,7 @@ The server can be configured using the `config.json` file. The following are the
 {
     "host": "127.0.0.1", // ENet Host
     "port": "17091", // ENet Port
+    "serverCdn": "", // Growtopia CDN to handle missing files
     "loginUrl": "gtlogin-backend.vercel.app", // URI for client login
     "isLogging": false,
     "rateLimit": 150,
