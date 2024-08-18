@@ -47,18 +47,18 @@ The server can be configured using the `config.json` file. The following are the
 
 ```json
 {
-    "host": "127.0.0.1",
-    "port": "17091",
-    "loginUrl": "gtlogin-backend.vercel.app",
-    "isLogging": true,
+    "host": "127.0.0.1", // ENet Host
+    "port": "17091", // ENet Port
+    "loginUrl": "gtlogin-backend.vercel.app", // URI for client login
+    "isLogging": false,
     "rateLimit": 150,
     "rateLimitDuration": 5,
+    "enableGeo": true,
     "trustedRegions": [
         "ID",
         "SG",
         "MY"
-    ]
-}
+    ]}
 ```
 
 ## Contact
