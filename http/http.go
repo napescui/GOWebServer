@@ -99,6 +99,55 @@ func Initialize() *fiber.App {
 		return c.Next()
 	})
 
+	app.Static("/cache", "./cache")
+
+	app.Use(func(c *fiber.Ctx) error {
+		if strings.HasPrefix(c.Path(), "/cache") {
+			logger.Info("Connection from: " + c.IP() + " | Downloading: " + c.Path())
+
+			pathname := filepath.Join("./cache", c.Path())
+
+			if _, err := os.Stat(pathname); os.IsNotExist(err) {
+				return c.Redirect(
+					fmt.Sprintf("https://ubistatic-a.akamaihd.net/%s%s", config.serverCdn, c.Path()),
+					fiber.StatusMovedPermanently,
+				)
+			}
+
+			file, err := os.Open(pathname)
+			if err != nil {
+				return c.Status(fiber.StatusNotFound).SendString("error from loading")
+			}
+			defer file.Close()
+
+			buffer, err := io.ReadAll(file)
+			if err != nil {
+				return c.Status(fiber.StatusNotFound).SendString("error")
+			}
+
+			contentTypes := map[string]string{
+				".ico":  "image/x-icon",
+				".html": "text/html",
+				".js":   "text/javascript",
+				".json": "application/json",
+				".css":  "text/css",
+				".png":  "image/png",
+				".jpg":  "image/jpeg",
+				".wav":  "audio/wav",
+				".mp3":  "audio/mpeg",
+				".svg":  "image/svg+xml",
+				".pdf":  "application/pdf",
+				".doc":  "application/msword",
+			}
+
+			ext := filepath.Ext(c.Path())
+			c.Set("Content-Type", contentTypes[ext])
+
+			return c.Send(buffer)
+		}
+		return c.Next()
+	})
+
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})

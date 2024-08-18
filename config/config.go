@@ -14,6 +14,7 @@ type Config struct {
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	LoginUrl string `json:"loginUrl"`
+	ServerCdn string `json:"serverCdn"`
 
 	// Logger Configuration
 	Logger bool `json:"isLogging"`
@@ -71,6 +72,7 @@ func CreateConfig() Config {
 		Host:              "127.0.0.1",
 		Port:              "17091",
 		LoginUrl:          "default",
+		ServerCdn:         "default",
 		Logger:            true,
 		RateLimit:         150, // 60 requests per minute
 		RateLimitDuration: 5,   // 2 minutes of rate limit cooldown
