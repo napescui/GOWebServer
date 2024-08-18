@@ -174,39 +174,6 @@ func Initialize() *fiber.App {
 		return c.SendString(content)
 	})
 
-	app.Post("/player/login/dashboard", func(c *fiber.Ctx) error {
-		htmlFile, err := os.ReadFile("html/dashboard.html")
-		if err != nil {
-			logger.Error(err)
-			return c.Status(fiber.StatusInternalServerError).SendString("Error reading file")
-		}
-	
-		html := string(htmlFile)
-		html = strings.Replace(html, "{serverName}", config.ServerName, -1)
-		html = strings.Replace(html, "{serverSupport}", config.ServerSupport, -1)
-		html = strings.Replace(html, "{serverHost}", config.Host, -1)
-		c.Set("Content-Type", "text/html")
-		return c.SendString(html)
-	})
-
-	app.Post("/player/growid/login/validate", func(c *fiber.Ctx) error {
-		token := c.FormValue("_token")
-		growid := c.FormValue("growId")
-		password := c.FormValue("password")
-
-		encoded := fmt.Sprintf("_token=%s&growId=%s&password=%s", token, growid, password)
-		encoded = base64.StdEncoding.EncodeToString([]byte(encoded))
-		
-		data := fmt.Sprintf(`{"status":"success","message":"Account Validated","token":"%s","url":"","accountType":"growtopia"}`, encoded)
-
-		return c.SendString(data)
-	})
-
-	app.Get("/player/validate", func(c *fiber.Ctx) error {
-		c.Set("Content-Type", "text/html")
-		return c.SendString("<script>window.close();</script>")
-	})
-
 	app.Use(func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).SendString("404 Not Found")
 	})
