@@ -2,13 +2,14 @@ package http
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
 	"net"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
-	"os"
-	"encoding/base64"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -35,8 +36,11 @@ func Initialize() *fiber.App {
 
 	var db *geoip2.Reader
 	var err error
-	if db, err = geoip2.Open("GeoLite2-City.mmdb"); err != nil {
-		logger.Error(err)
+
+	if config.EnableGeo {
+		if db, err = geoip2.Open("GeoLite2-City.mmdb"); err != nil {
+			logger.Error(err)
+		}
 	}
 
 	app.Use(cors.New())
@@ -109,7 +113,7 @@ func Initialize() *fiber.App {
 
 			if _, err := os.Stat(pathname); os.IsNotExist(err) {
 				return c.Redirect(
-					fmt.Sprintf("https://ubistatic-a.akamaihd.net/%s%s", config.serverCdn, c.Path()),
+					fmt.Sprintf("https://ubistatic-a.akamaihd.net/%s%s", config.ServerCdn, c.Path()),
 					fiber.StatusMovedPermanently,
 				)
 			}
