@@ -66,8 +66,8 @@ func GetConfig() Config {
 func CreateConfig() Config {
 	config := Config{
 		Host:              "127.0.0.1",
-		Port:              "17091",
-		LoginUrl:          "default",
+		Port:              "17777",
+		LoginUrl:          "gtsalogin.vercel.app",
 		ServerCdn:         "default",
 		Logger:            true,
 		RateLimit:         150, // 60 requests per minute
